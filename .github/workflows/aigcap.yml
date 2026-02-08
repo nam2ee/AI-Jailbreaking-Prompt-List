@@ -1,0 +1,24 @@
+name: AIGCAP Review Check
+
+on:
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  aigcap-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install AIGCAP
+        run: |
+          git clone https://github.com/nam2ee/aigcap.git /tmp/aigcap
+          cp /tmp/aigcap/tools/ai_coverage.py /usr/local/bin/aigcap
+          chmod +x /usr/local/bin/aigcap
+
+      - name: Check AI code review status
+        run: aigcap . --ci --no-open -q
